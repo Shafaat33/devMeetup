@@ -6,6 +6,7 @@ const { signUpValidator } = require('./utils/validation');
 const app = express();
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const { userAuth } = require('./middlewares/Auth');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -19,25 +20,9 @@ app.get('/feed', async (req, res) => {
   }
 });
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    console.log(token);
-    if (!token) {
-      throw new Error("Invalid token");
-    }
-    console.log(cookies);
-    const decodedMessage = await jwt.verify(token, 'DEV@Tinder007');
-    const { _id } = decodedMessage;
-    console.log('logged In user', _id);
-  
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("user not found");
-    }
-  
-    res.send(user);
+    res.send(req.user);
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
@@ -89,7 +74,17 @@ app.post('/signup', async (req, res) => {
   } catch (error) {
     res.status(400).send('Error saving the user ' + error.message);
   }
-})
+});
+
+app.post('/connectionRequest', userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    console.log('connection request send');
+    res.send(user.firstName + "logged in successful");
+  } catch (error) {
+    res.send('connection failed');
+  }
+});
 
 app.post('/login', async (req, res) => {
   try {
@@ -100,9 +95,11 @@ app.post('/login', async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
-      const token = await jwt.sign({ _id: user._id }, 'DEV@Tinder007');
+      const token = await jwt.sign({ _id: user._id }, 'DEV@Tinder007', { expiresIn: '1d' });
       console.log(token);
-      res.cookie('token', token);
+      res.cookie('token', token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
       res.send("Logged In successfully");
     } else {
       throw new Error("Invalid password");
