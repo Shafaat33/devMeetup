@@ -2,6 +2,7 @@ const express = require('express');
 const profileRouter = express.Router();
 const User = require('./../models/user');
 const { userAuth } = require('./../middlewares/Auth');
+const { validateEditProfileData } = require('./../utils/validation');
 
 profileRouter.get('/feed', async (req, res) => {
   try {
@@ -51,6 +52,21 @@ profileRouter.get('/user', async (req, res) => {
     }
   } catch (error) {
     res.status(400).send('Something went wrong ' + error.message);
+  }
+});
+
+profileRouter.patch('/profile/update/', userAuth, async (req, res) => {
+  try {
+    if(!validateEditProfileData(req)) {
+      throw new Error("Edit not allowed");
+    }
+    const loggedInUser = req.user;
+    Object.keys(req.body).forEach((key) => loggedInUser[key] = req.body[key]);
+    
+    await loggedInUser.save();
+    res.send('profile updated successfully');
+  } catch (error) {
+    res.status(400).send('something went wrong' + error.message);
   }
 });
 
