@@ -4,15 +4,6 @@ const User = require('./../models/user');
 const { userAuth } = require('./../middlewares/Auth');
 const { validateEditProfileData } = require('./../utils/validation');
 
-profileRouter.get('/feed', async (req, res) => {
-  try {
-    const user = await User.find({ });
-    res.send(user);
-  } catch (error) {
-    res.status(400).send('no user found');
-  }
-});
-
 profileRouter.get('/profile', userAuth, async (req, res) => {
   try {
     res.send(req.user);

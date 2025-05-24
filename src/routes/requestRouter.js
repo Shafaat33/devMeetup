@@ -85,7 +85,7 @@ requestRouter.post('/request/receive/:status/:requestId', userAuth, async (req, 
     
     const data = await connectionRequest.save();
     
-    res.status(200).json({ message: "Request Accepted Successfully", data });
+    res.json({ message: "Request Accepted Successfully", data });
     
   } catch (error) {
     res.status(400).send({ message: "Something went wrong while accepting request"});
