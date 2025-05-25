@@ -24,6 +24,9 @@ const userSchema = new Schema({
     type: Number,
     min: 18,
   },
+  photoUrl: {
+    type: String,
+  },
   gender: {
     type: String,
     validate(value) {

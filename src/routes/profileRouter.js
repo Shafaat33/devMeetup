@@ -4,7 +4,7 @@ const User = require('./../models/user');
 const { userAuth } = require('./../middlewares/Auth');
 const { validateEditProfileData } = require('./../utils/validation');
 
-profileRouter.get('/profile', userAuth, async (req, res) => {
+profileRouter.get('/profile/view', userAuth, async (req, res) => {
   try {
     res.send(req.user);
   } catch (error) {

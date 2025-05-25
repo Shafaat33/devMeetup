@@ -7,9 +7,9 @@ const User = require('./../models/user');
 authRouter.post('/signup', async (req, res) => {
   try {
     signUpValidator(req);
-    const { firstName, lastName, emailId, password, age } = req.body;
+    const { firstName, lastName, emailId, password, age, photoUrl } = req.body;
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const userData = new User({ firstName, lastName, emailId, age, password: encryptedPassword });
+    const userData = new User({ firstName, lastName, emailId, age, photoUrl, password: encryptedPassword });
     await userData.save();
     res.send(`user saved successfully!`);
   } catch (error) {
@@ -27,11 +27,10 @@ authRouter.post('/login', async (req, res) => {
     const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
       const token = await user.getJWT();
-      console.log(token);
       res.cookie('token', token, {
         expires: new Date(Date.now() + 8 * 3600000),
       });
-      res.send("Logged In successfully");
+      res.send(user);
     } else {
       throw new Error("Invalid password");
     }
