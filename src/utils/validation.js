@@ -3,7 +3,7 @@ const validator = require("validator");
 const signUpValidator = (req) => {
   const { firstName, lastName, emailId, password } = req.body;
   if (!firstName || !lastName) {
-    throw new Error("Nameeee is not valid");
+    throw new Error("Name is not valid");
   } else if (!validator.isEmail(emailId)) {
     throw new Error("Email is incorrect");
   } else if (!validator.isStrongPassword(password)) {
@@ -12,10 +12,17 @@ const signUpValidator = (req) => {
 };
 
 const validateEditProfileData = (req) => {
-  const editableKeys = ['firstName', 'LastName', 'age', 'gender'];
-  const isEditAllowed = Object.keys(req.body).every((field) => editableKeys.includes(field));
-
-  return isEditAllowed;
+  const editableKeys = ['firstName', 'lastName', 'age', 'gender', 'photoUrl', 'about'];
+  const keys = Object.keys(req.body);
+  
+  const invalidFields = keys.filter((field) => !editableKeys.includes(field));
+  
+  if (invalidFields.length > 0) {
+    console.log('Invalid fields:', invalidFields);
+    return false;
+  }
+  
+  return true;
 };
 
 module.exports = {

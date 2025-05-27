@@ -5,8 +5,7 @@ const User = require('./../models/user');
 
 const { userAuth } = require("../middlewares/Auth");
 
-
-const SAFE_USER_DATA = ["firstName", "lastName", "age", "gender"];
+const SAFE_USER_DATA = ["firstName", "lastName", "age", "gender", 'photoUrl'];
 
 userRouter.get('/user/requests/received', userAuth, async (req, res) => {
   try {
@@ -17,7 +16,7 @@ userRouter.get('/user/requests/received', userAuth, async (req, res) => {
       status: 'interested',
     }).populate('fromUserId', SAFE_USER_DATA);
     
-    res.json({ message: 'Data fetched successfully', data: connectionData });
+    res.json({ message: 'Data fetched successfully', requests: connectionData });
   } catch (error) {
     res.status(400).send({ message: "Error" + error });
   }
@@ -40,7 +39,7 @@ userRouter.get('/user/connections', userAuth, async (req, res) =>{
       }
       return connection.fromUserId});
     
-    res.send({ message: 'Connection Fetched Successfully', data });
+    res.send({ message: 'Connection Fetched Successfully', connections: data });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
