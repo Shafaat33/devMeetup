@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
     
     if (!token) {
-      res.status(401).send("Please login first!!");
+      return res.status(401).send("Please login first!!");
     }
   
     const decodeObj = await jwt.verify(token, 'DEV@Tinder007');
