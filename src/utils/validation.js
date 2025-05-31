@@ -11,6 +11,21 @@ const signUpValidator = (req) => {
   }
 };
 
+const validateEditProfileData = (req) => {
+  const editableKeys = ['firstName', 'lastName', 'age', 'gender', 'photoUrl', 'about'];
+  const keys = Object.keys(req.body);
+  
+  const invalidFields = keys.filter((field) => !editableKeys.includes(field));
+  
+  if (invalidFields.length > 0) {
+    console.log('Invalid fields:', invalidFields);
+    return false;
+  }
+  
+  return true;
+};
+
 module.exports = {
   signUpValidator,
+  validateEditProfileData,
 };
