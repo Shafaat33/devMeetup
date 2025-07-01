@@ -5,7 +5,7 @@ const User = require('./../models/user');
 
 const { userAuth } = require("../middlewares/Auth");
 
-const SAFE_USER_DATA = ["firstName", "lastName", "age", "gender", 'photoUrl'];
+const SAFE_USER_DATA = ["firstName", "lastName", "age", "gender", 'photoUrl', 'about'];
 
 userRouter.get('/user/requests/received', userAuth, async (req, res) => {
   try {
@@ -22,7 +22,7 @@ userRouter.get('/user/requests/received', userAuth, async (req, res) => {
   }
 });
 
-userRouter.get('/user/connections', userAuth, async (req, res) =>{
+userRouter.get('/user/connections', userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
     
@@ -31,10 +31,11 @@ userRouter.get('/user/connections', userAuth, async (req, res) =>{
         { toUserId: loggedInUser._id, status: 'accepted' },
         { fromUserId: loggedInUser._id, status: 'accepted' },
       ]
-    }).populate('fromUserId', SAFE_USER_DATA).populate('toUserId', SAFE_USER_DATA);
+    }).populate('fromUserId', SAFE_USER_DATA)
+      .populate('toUserId', SAFE_USER_DATA);
     
     const data = connections.map((connection) => {
-      if (connection.fromUserId._id.toString() === loggedInUser._id) {
+      if (connection.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return connection.toUserId;
       }
       return connection.fromUserId});
