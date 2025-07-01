@@ -27,6 +27,9 @@ const userSchema = new Schema({
   photoUrl: {
     type: String,
   },
+  about: {
+    type: String,
+  },
   gender: {
     type: String,
     validate(value) {
